@@ -1,0 +1,27 @@
+services:
+    postgres:
+      image: postgres:16
+      container_name: arxiv_postgres
+      environment:
+          POSTGRES_DB: arxiv_db
+          POSTGRES_USER: arxiv_user
+          POSTGRES_PASSWORD: arxiv_password
+      ports:
+          - '5432:5432'
+      volumes:
+          - ./data:/var/lib/postgresql/data
+          # - /tmp/data/postgres:/var/lib/postgresql/data
+      restart: unless-stopped
+      healthcheck:
+          test: ['CMD-SHELL', 'pg_isready -U arxiv_user -d arxiv_db']
+          interval: 10s
+          timeout: 5s
+          retries: 5
+      networks:
+        - backend-network
+
+
+networks:
+    backend-network:
+        driver: bridge
+        external: true
